@@ -482,16 +482,20 @@ public:
 
       Replaceall(opname, "operator ", "");
 
-      if (strstr(Char(mangled_name), "__get__")) {
+      if (strstr(Char(mangled_name), "_get")) {
 	String *set_name = Copy(mangled_name);
+	String *varmem_name = Copy(Getattr(n, "name"));
 	if (!GetFlag(n, "feature:immutable")) {
-	  Replaceall(set_name, "__get__", "__set__");
-	  Printf(f_class_ctors, "    \"%s\", (fun args -> " "if args = (C_list [ raw_ptr ]) then %s args else %s args) ;\n", opname, mangled_name, set_name);
+	  Replaceall(set_name, "_get", "_set");
+	  Printf(f_class_ctors, "    \"[%s]\", (fun args -> " "if args = (C_list [ raw_ptr ]) then %s args else %s args) ;\n", varmem_name, mangled_name, set_name);
 	  Delete(set_name);
+	  Delete(varmem_name);
 	} else {
-	  Printf(f_class_ctors, "    \"%s\", (fun args -> " "if args = (C_list [ raw_ptr ]) then %s args else C_void) ;\n", opname, mangled_name);
+	String *varmem_name = Copy(Getattr(n, "name"));
+	  Printf(f_class_ctors, "    \"[%s]\", (fun args -> " "if args = (C_list [ raw_ptr ]) then %s args else C_void) ;\n", varmem_name, mangled_name);
+	  Delete(varmem_name);
 	}
-      } else if (strstr(Char(mangled_name), "__set__")) {
+      } else if (strstr(Char(mangled_name), "__set")) {
 	;			/* Nothing ... handled by the case above */
       } else {
 	Printf(f_class_ctors, "    \"%s\", %s ;\n", opname, mangled_name);
