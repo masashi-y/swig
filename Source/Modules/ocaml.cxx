@@ -68,7 +68,7 @@ public:
     director_prot_ctor_code = NewString("");
     Printv(director_prot_ctor_code,
 	   "if ( $comparison ) { /* subclassed */\n",
-	   "  $director_new \n", "} else {\n", "  failwith(\"accessing abstract class or protected constructor\"); \n", "}\n", NIL);
+	   "  $director_new \n", "} else {\n", "  caml_failwith(\"accessing abstract class or protected constructor\"); \n", "}\n", NIL);
     director_multiple_inheritance = 1;
     director_language = 1;
   }
@@ -726,7 +726,7 @@ public:
 	       "argv = (CAML_VALUE *)malloc( argc * sizeof( CAML_VALUE ) );\n"
 	       "for( i = 0; i < argc; i++ ) {\n" "  argv[i] = caml_list_nth(args,i);\n" "}\n", NIL);
 	Printv(df->code, dispatch, "\n", NIL);
-	Printf(df->code, "failwith(\"No matching function for overloaded '%s'\");\n", iname);
+	Printf(df->code, "caml_failwith(\"No matching function for overloaded '%s'\");\n", iname);
 	Printv(df->code, "}\n", NIL);
 	Wrapper_print(df, f_wrappers);
 

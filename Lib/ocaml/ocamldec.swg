@@ -4,6 +4,7 @@
  * Ocaml runtime code -- declarations
  * ----------------------------------------------------------------------------- */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -56,7 +57,7 @@ SWIGEXT {
 #define SWIG_Store_field(block, offset, val) do{ \
   mlsize_t caml__temp_offset = (offset); \
   caml_value_t caml__temp_val = (val); \
-  modify (&SWIG_Field ((block), caml__temp_offset), caml__temp_val); \
+  caml_modify (&SWIG_Field ((block), caml__temp_offset), caml__temp_val); \
 }while(0)
 
 #define SWIG_Data_custom_val(v) ((void *) &SWIG_Field((v), 1))
@@ -101,9 +102,9 @@ SWIGEXT {
 
 
 #ifndef ARCH_ALIGN_INT64
-#define SWIG_Int64_val(v) (*((int64 *) SWIG_Data_custom_val(v)))
+#define SWIG_Int64_val(v) (*((int64_t *) SWIG_Data_custom_val(v)))
 #else
-CAMLextern int64 Int64_val(caml_value_t v);
+CAMLextern int64_t Int64_val(caml_value_t v);
 #define SWIG_Int64_val(v) Int64_val(v)
 #endif
 
@@ -111,7 +112,7 @@ CAMLextern int64 Int64_val(caml_value_t v);
 #define SWIG_GetModule(clientdata) SWIG_Ocaml_GetModule(clientdata)
 #define SWIG_SetModule(clientdata, pointer) SWIG_Ocaml_SetModule(pointer)
 
-#define SWIG_contract_assert(expr, msg) if(!(expr)) {failwith(msg);} else
+#define SWIG_contract_assert(expr, msg) if(!(expr)) {caml_failwith(msg);} else
 
     SWIGSTATIC int
     SWIG_GetPtr(void *source, void **result, swig_type_info *type, swig_type_info *result_type);
