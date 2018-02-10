@@ -51,10 +51,20 @@ namespace std {
 	T operator [] ( int f );
 	vector <T> &operator = ( vector <T> &other );
 	%extend {
-	    void set( int i, const T &x ) {
+	    void set( unsigned i, const T &x ) {
+        if (i < self->size ()) {
+          (*self)[i] = x;
+          return;
+        }
+        else
+          throw std::out_of_range("vector index out of range");
+      }
+	};
+	%extend {
+	    void set_init( unsigned i, const T &x ) {
 		self->resize(i+1);
 		(*self)[i] = x;
-	    }
+        }
 	};
 	%extend {
 	    T *to_array() {
@@ -71,7 +81,7 @@ namespace std {
   
   let array_to_vector v argcons array = 
     for i = 0 to (Array.length array) - 1 do
-	(invoke v) "set" (C_list [ C_int i ; (argcons array.(i)) ])
+	(invoke v) "set_init" (C_list [ C_int i ; (argcons array.(i)) ])
     done ;
     v
     

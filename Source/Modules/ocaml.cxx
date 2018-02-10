@@ -15,6 +15,20 @@
 
 #include <ctype.h>
 
+int str_ends_with(const char * str, const char * suffix) {
+
+  if( str == NULL || suffix == NULL )
+    return 0;
+
+  size_t str_len = strlen(str);
+  size_t suffix_len = strlen(suffix);
+
+  if(suffix_len > str_len)
+    return 0;
+
+  return 0 == strncmp( str + str_len - suffix_len, suffix, suffix_len );
+}
+
 static const char *usage = "\
 Ocaml Options (available with -ocaml)\n\
      -oldvarnames    - Old intermediary method names for variable wrappers\n\
@@ -482,7 +496,7 @@ public:
 
       Replaceall(opname, "operator ", "");
 
-      if (strstr(Char(mangled_name), "_get")) {
+      if (str_ends_with(Char(mangled_name), "_get")) {
 	String *set_name = Copy(mangled_name);
 	String *varmem_name = Copy(Getattr(n, "name"));
 	if (!GetFlag(n, "feature:immutable")) {
@@ -1149,7 +1163,7 @@ public:
 	if (bname) {
 	  String *base_create = NewString("");
 	  Printv(base_create, "(create_class \"", bname, "\")", NIL);
-	  Printv(f_class_ctors, "   \"::", bname, "\", (fun args -> ", base_create, " args) ;\n", NIL);
+	  // Printv(f_class_ctors, "   \"::", bname, "\", (fun args -> ", base_create, " args) ;\n", NIL);
 	  Printv(base_classes, base_create, " ;\n", NIL);
 	}
 	b = Next(b);
